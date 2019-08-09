@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<typeAliases>
+		<typeAlias type="com.example.xProject.model.user.dto.UserDTO" alias="user"/>
+		<typeAlias type="com.example.xProject.model.shop.dto.GoodsDTO" alias="goods"/>
+		<typeAlias type="com.example.xProject.model.shop.dto.GoodsCartDTO" alias="cart"/>
+		<typeAlias type="com.example.xProject.model.shop.dto.ReviewDTO" alias="review"/>
+		<typeAlias type="com.example.xProject.model.board.dto.BoardDTO" alias="board"/>
+	</typeAliases>
+
+</configuration>
+

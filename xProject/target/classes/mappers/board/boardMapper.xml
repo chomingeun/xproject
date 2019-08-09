@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+
+	<select id="getBoardList" resultType="board">
+		<include refid="paging_header" />
+   		select bid,title, content, tag, 
+		view_cnt, reg_id, reg_dt, edit_dt
+    	from tbl_board	
+    	<include refid="search" />
+    	order by bid desc
+    	<include refid="paging_footer" />
+ 	</select>
+	<sql id="paging_header">
+		select *
+		from (
+		    select rownum as rn, A.*
+		    from (	
+	</sql>
+	<sql id="paging_footer">
+		    ) A
+		) where rn between #{start} and #{end}	
+	</sql>
+	
+	<sql id="search">    				
+	<choose>
+		<when test="search_option != null">
+		where title like #{keyword}
+		</when>
+	</choose>
+	</sql>		
+
+
+	<select id="getBoardContent" resultType="board">
+		select
+		bid,title, content, 
+		tag, view_cnt, reg_id, reg_dt, edit_dt
+		from
+		tbl_board
+		where
+		bid=#{bid}
+	</select>
+
+	<insert id="getInsertBoard">
+		insert into tbl_board(bid, title, content, 
+		tag, view_cnt, reg_id, reg_dt, edit_dt)
+		values (tbl_board_sql.nextval,#{title},#{content},#{tag},0,#{reg_id},sysdate,sysdate)		
+	</insert>	
+
+	<update id="updateBoard" parameterType="com.example.xProject.model.board.dto.BoardDTO">
+		update tbl_board set 
+		title=#{title}, content=#{content}, tag=#{tag}, edit_dt=sysdate
+		where
+		bid = #{bid}
+	</update>	
+
+	<delete id="deleteBoard" parameterType="int">
+		delete from tbl_board
+		where bid = #{bid}
+	</delete>	
+
+	<update id="updateViewCnt" parameterType="com.example.xProject.model.board.dto.BoardDTO">
+		update tbl_board set
+		view_cnt = view_cnt + 1
+		where
+		bid = #{bid}
+	</update>
+
+
+	<select id="countBoard" resultType="int">
+  		select count(*) 
+  		from tbl_board 
+  		<include refid="search2" />
+  	</select>
+ 	<sql id="search2">    		
+		where title like #{keyword}					
+	</sql>
+
+</mapper>
+

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 다른 mapper와 중복되지 않도록 네임스페이스 기재 -->
+<mapper namespace="goodscart">
+	<select id = "goodscart_list" resultType="cart">
+	select cart_id, u.userid, name
+	, g.good_id, gname, amount, price
+	, price*amount money, delivered
+	from users u, goods_cart c, goods g
+	where u.userid=c.userid and g.good_id=c.good_id
+	and u.userid=#{userid}
+	</select>
+	
+	<insert id = "goodscart_insert">
+	insert into goods_cart(cart_id, userid, good_id, amount)
+	values
+	(goodscart_sql.nextval, #{userid}, #{good_id}, #{amount})
+	</insert>
+	
+	<select id = "goodscart_sumMoney" resultType="int">
+		select nvl(sum(price*amount),0) money
+		from goods g, goods_cart c
+		where c.good_id=g.good_id
+		and userid=#{userid} 
+		and delivered='n'
+	</select>	
+	
+	<delete id = "goodscart_delete">
+		delete from goods_cart
+		where cart_id=#{cart_id}
+	</delete>
+	
+	<delete id = "goodscart_deleteAll">
+		delete from goods_cart
+		where userid=#{userid}
+	</delete>
+	
+	<update id = "goodscart_modifyGoodsCart">
+		update goods_cart
+		set amount=#{amount}
+		where cart_id=#{cart_id}
+	</update>
+	
+	<select id = "goodscart_money" resultType="cart">
+		select gname, sum(price*amount) money
+		from goods_cart c, goods g
+		where g.good_id=c.good_id
+		and delivered='y'
+		group by gname
+		order by gname
+	</select>
+	
+	<update id="orderAll">
+		update goods_cart set delivered='y'
+	</update>
+	
+	<update id="order">
+		update goods_cart set delivered='y' where cart_id=#{cart_id}
+	</update>
+	
+	<select id="mypage" resultType="cart">
+		select gname, amount, cart_id, g.good_id
+		, u.userid, name, address, hp, delivered
+		from goods g, goods_cart c, users u
+		where u.userid=c.userid	and g.good_id=c.good_id
+		and u.userid=#{userid}
+	</select>	
+	
+	<select id="user_money" resultType="cart">
+		select u.name, sum(price*amount) money
+		from users u, goods_cart c, goods g
+		where u.userid=c.userid and g.good_id=c.good_id
+		and delivered='y'
+		group by u.name
+		order by u.name
+	</select>
+	
+	<select id="myCartMoney" resultType="cart">
+		select gname, sum(price*amount) money
+		from users u, goods_cart c, goods g
+		where u.userid=c.userid and g.good_id=c.good_id
+		and delivered='y'
+		and u.userid=#{userid}
+		group by gname
+		order by money desc
+	</select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

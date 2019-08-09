@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 다른 mapper와 중복되지 않도록 네임스페이스 기재 -->
+<mapper namespace="user">
+	<insert id="join">
+		insert into users(userid,passwd,name,hp,email,zipcode,address,birth) 
+		values(#{userid},#{passwd},#{name},#{hp},#{email},#{zipcode},#{address},#{birth})
+	</insert>
+	<select id="login" resultType="user">
+		select userid,passwd,name,hp,email,zipcode,address,birth,join_date 
+		from users 
+		where userid=#{userid}
+	</select>
+	<select id="userList" resultType="user">
+		<include refid="paging_header" />
+		select userid,passwd,name,hp,email,zipcode,address,birth,join_date 
+		from users 
+		<include refid="search" />
+		order by join_date desc
+		<include refid="paging_footer" />
+	</select>	
+		<sql id="paging_header">
+		select *
+		from (
+		    select rownum as rn, A.*
+		    from (	
+		</sql>
+		<sql id="paging_footer">
+		    ) A
+		) where rn between #{start} and #{end}	
+		</sql>
+		<sql id="search">
+			<choose>
+				<when test="search_option!=null">
+					where (name like #{keyword} 
+				        or userid like #{keyword}
+				        or email like #{keyword}
+				        or address like #{keyword})
+				</when>
+			</choose>
+		</sql>
+	
+	<select id="view" resultType="user">
+		select userid,passwd,name,hp,email,zipcode,address,birth,join_date 
+		from users 
+		where userid=#{userid}
+	</select>
+	<update id="update">
+		update users 
+		set passwd=#{passwd},name=#{name},hp=#{hp},email=#{email}
+		,zipcode=#{zipcode},address=#{address},birth=#{birth} 
+		where userid=#{userid}
+	</update>
+	<delete id="dropout">
+		delete from users where userid=#{userid}
+	</delete>
+	<select id="id_check" resultType="String">
+		select userid from users 
+		where userid=#{userid}
+	</select>
+	<delete id="deleteUser">
+		delete from users where userid=#{userid}
+	</delete>
+	
+	<select id="countUsers" resultType="int">
+		select count(*) from users
+		<include refid="search" />
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 다른 mapper와 중복되지 않도록 네임스페이스 기재 -->
+<mapper namespace="goods">
+  <select id="goods_list" resultType="goods">
+    <include refid="paging_header" />
+    select * from goods
+    where code=1
+    <include refid="search" />
+    order by good_id
+    <include refid="paging_footer" />
+  </select>
+	<sql id="paging_header">
+		select *
+		from (
+		    select rownum as rn, A.*
+		    from (	
+	</sql>
+	<sql id="paging_footer">
+		    ) A
+		) where rn between #{start} and #{end}	
+	</sql>
+	
+	<sql id="search">    				
+	<choose>
+		<when test="search_option != null">
+		and gname like #{keyword}
+		</when>
+	</choose>
+	</sql>		
+  
+  <select id="goods_list2" resultType="goods">
+  	<include refid="paging_header" />
+    select * from goods
+    where code=2
+    <include refid="search" />
+    order by good_id 
+    <include refid="paging_footer" />
+  </select>
+  
+  <select id="goods_list3" resultType="goods">
+  	<include refid="paging_header" />
+    select * from goods
+    where code=3
+    <include refid="search" />
+    order by good_id 
+    <include refid="paging_footer" />
+  </select>
+  
+  <select id="goods_list4" resultType="goods">
+  	<include refid="paging_header" />
+    select * from goods
+    where code=4
+    <include refid="search" />
+    order by good_id 
+    <include refid="paging_footer" />
+  </select>
+  
+  <select id="list_on_sale" resultType="goods">
+  	select * from goods
+  	where on_discount!=0
+  </select>
+  
+  <select id = "goods_detail" resultType="goods">
+  	select * from goods
+  	where good_id=#{good_id}
+  </select>
+  
+  <insert id = "goods_insert">
+  	insert into goods(code,good_id,gname,price,description,img_path) 
+  	values(#{code}, #{good_id}, #{gname}, #{price}, #{description}, #{img_path})
+  </insert>
+  
+  <update id="goods_update">
+  	update goods
+  	set 
+  	gname=#{gname},
+  	on_discount=#{on_discount},
+  	price=price*(100-#{on_discount})/100,
+    description=#{description},
+    img_path=#{img_path}
+    where good_id=#{good_id}
+  </update>
+  
+  <select id = "goods_fileInfo" resultType="String">
+  	select img_path from goods
+  	where good_id=#{good_id}
+  </select>
+  
+  <delete id = "goods_delete">
+  	delete from goods
+  	where good_id=#{good_id}
+  </delete>
+  
+  <select id="countGoods" resultType="int">
+  	select count(*) 
+  	from goods 
+  	<include refid="search2" />
+  </select>
+ 	<sql id="search2">    		
+		where gname like #{keyword}					
+	</sql>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
